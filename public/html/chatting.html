@@ -74,7 +74,6 @@
     $(".contents .sendBox .btnSend").on("click", function () {
       const chattingItem = { nickName: $("#nickName").val(), msg: $(".sendBox #msg").val() };
       socket.emit("chatting", chattingItem);
-      // 비우기, 노란색 불들어오게 하기...
       $("#msg").val("");
     });
     $(".contents .sendBox #msg").on("keydown", function (e) {
@@ -114,7 +113,7 @@
 
     socket.on("chatting", (data) => {
       const meOrOther = data.nickName === $("#nickName").val() ? "me" : "other";
-      console.log(data.msg);
+      // console.log(data.msg);
       $(".chattingBox .list").append(`<li class="${meOrOther}">
             <div class="profile">
               <img src="../images/man.png" alt="" />

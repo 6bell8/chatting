@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, "/public"))); // static(정적파일
 app.set("port", process.env.PORT || 8099);
 const PORT = app.get("port");
 
-io.on("connection", (socket) => {
+io.on("connxection", (socket) => {
   console.log("클라이언트 연결 되었습니다.");
   socket.on("chatting", (data) => {
     console.log(data);
@@ -26,11 +26,11 @@ io.on("connection", (socket) => {
 
 app.get("/chatting", (req, res) => {
   //res.send("chattingroom");
-  res.sendFile(path.join(__dirname, "/public/html/chatting.html"));
 }); // dirname은 절대경로 앞에있는 경로를 바꿔줄 필요가 없음
 
 app.get("/", (req, res) => {
-  res.send("hello node");
+  // res.send("hello node");
+  res.sendFile(path.join(__dirname, "/public/html/chatting.html"));
 });
 server.listen(PORT, () => {
   console.log(`${PORT}에서 서버 대기중`);

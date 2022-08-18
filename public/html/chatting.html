@@ -4,33 +4,34 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chatting</title>
-    <link rel="stylesheet" href="../css/reset.css" />
-    <link rel="stylesheet" href="../css/layout.css" />
+    <title>CHATTING</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <script src="/chatting/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script src="../js/jquery-3.6.0.min.js"></script>
   </head>
   <body>
-    <header id="header">
-      <h1 id="logo">GGAGGAO Talk</h1>
-    </header>
+    <header id="header"><h1 id="logo">GGAGGAO TALK</h1></header>
     <div class="contents">
       <div class="user">
         <label>
           <span class="nick">대화명</span>
-          <input type="text" placeholder="대화명을 입력해주세요" id="nickName" />
+          <input type="text" placeholder="대화명을 입력해 주세요." id="nickName" />
         </label>
       </div>
       <div class="chattingBox">
         <ul class="list">
-          <!-- <li class="other">
+          <!--
+          <li class="other">
             <div class="profile">
-              <img src="../images/profile.png" alt="" />
+              <img src="../images/man.png" alt="" />
             </div>
             <div class="msgBox">
-              <span class="name">Lady</span>
+              <span class="name">쨩난다</span>
               <div class="inner">
                 <div class="msg">안녕하세요. 만나서 반갑습니다.</div>
                 <div class="time">오후 06:30</div>
@@ -39,16 +40,17 @@
           </li>
           <li class="me">
             <div class="profile">
-              <img src="../images/curly-hair.png" alt="" />
+              <img src="../images/man.png" alt="" />
             </div>
             <div class="msgBox">
-              <span class="name">Lady</span>
+              <span class="name">쨩난다</span>
               <div class="inner">
                 <div class="msg">안녕하세요. 만나서 반갑습니다.</div>
                 <div class="time">오후 06:30</div>
               </div>
             </div>
-          </li> -->
+          </li>
+          -->
         </ul>
       </div>
       <div class="sendBox">
@@ -62,54 +64,47 @@
   <script>
     const socket = io();
     //서버에서 넘어오는 이벤트 받는 곳
-    // socket.on("chatting", (data) => {});
-    // socket.on("yaho", (data) => {
+    //socket.on("chatting", (data) => {});
+    // socket.on("serverYaho", (data) => {
     //   console.log(data);
     // });
-
     // 클라이언트에서 이벤트 보내는 곳
-    // socket.emit("chatting", "나는 채팅으로 chatting.");
-    // socket.emit("yaho", "이벤트를 날리고 있수다 yaho .");
-
-    $(".contents .sendBox .btnSend").on("click", () => {
+    //socket.emit("yaho", "나는 yaho로 이벤트를 날리고 있습니다.");
+    //socket.emit("chatting", "나는 chatting으로 이벤트를 날리고있습니다.");
+    $(".contents .sendBox .btnSend").on("click", function () {
       const chattingItem = { nickName: $("#nickName").val(), msg: $(".sendBox #msg").val() };
-
       socket.emit("chatting", chattingItem);
-      //비우기
+      // 비우기, 노란색 불들어오게 하기...
       $("#msg").val("");
     });
-
-    $(".contents .sendBox #msg").bind("keydown", function (e) {
-      if (event.shiftKey && event.which === 13) {
-        $("#msg").text("\n");
-        return;
-      }
-      if (e.keyCode === 13) {
-        if ($("#msg").val().trim() === "") {
-          e.preventDefault();
-          $("#msg").val("");
-          return;
-        }
-        const chattingItem = { nickName: $("#nickName").val(), msg: $(".sendBox #msg").val() };
-        $("#msg").val("");
-        $(".btnSend").removeClass("on");
-        socket.emit("chatting", chattingItem);
-      }
-    });
-
     $(".contents .sendBox #msg").on("keydown", function (e) {
       if (e.keyCode === 13) {
         if ($("#msg").val().trim() === "") {
           e.preventDefault();
-          $("#msg").val("");
           return;
         }
       }
     });
-
     $(".contents .sendBox #msg").on("keyup", function (e) {
-      //   console.log(e);
-
+      console.log(e);
+      if (e.keyCode === 13) {
+        if ($("#msg").val().trim() === "") {
+          e.preventDefault();
+          $("#msg").val("");
+          return;
+        }
+        if (!e.shiftKey) {
+          const chattingItem = {
+            nickName: $("#nickName").val(),
+            //msg: $(".sendBox #msg").val().replaceAll("\n", "<br>"),
+            msg: $(".sendBox #msg").val(),
+          };
+          socket.emit("chatting", chattingItem);
+          $("#msg").val("");
+          $(".btnSend").removeClass("on");
+          //console.log($(".sendBox #msg").val());
+        }
+      }
       if ($("#msg").val().trim() !== "") {
         $(".btnSend").addClass("on");
       } else {
@@ -119,19 +114,20 @@
 
     socket.on("chatting", (data) => {
       const meOrOther = data.nickName === $("#nickName").val() ? "me" : "other";
+      console.log(data.msg);
       $(".chattingBox .list").append(`<li class="${meOrOther}">
             <div class="profile">
-              <img src="../images/profile.png" alt="" />
-              </div>
-              <div class="msgBox">
-                <span class="name">${data.nickName}</span>
-                <div class= "inner">
-              <div class="msg">${data.msg}</div>
-              <div class="time">${data.time}</div>
+              <img src="../images/man.png" alt="" />
             </div>
+            <div class="msgBox">
+              <span class="name">${data.nickName}</span>
+              <div class="inner">
+                <div class="msg">${data.msg}</div>
+                <div class="time">${data.time}</div>
+              </div>
             </div>
           </li>`);
-      //내용 추가
+      // 내용 추가....
       $(".chattingBox").scrollTop($(".chattingBox .list").height());
     });
   </script>

@@ -75,6 +75,11 @@
       const chattingItem = { nickName: $("#nickName").val(), msg: $(".sendBox #msg").val() };
       socket.emit("chatting", chattingItem);
       $("#msg").val("");
+      if ($("#msg").val().trim() !== "") {
+        $(".btnSend").addClass("on");
+      } else {
+        $(".btnSend").removeClass("on");
+      }
     });
     $(".contents .sendBox #msg").on("keydown", function (e) {
       if (e.keyCode === 13) {
@@ -85,7 +90,7 @@
       }
     });
     $(".contents .sendBox #msg").on("keyup", function (e) {
-      console.log(e);
+      // console.log(e);
       if (e.keyCode === 13) {
         if ($("#msg").val().trim() === "") {
           e.preventDefault();
@@ -116,7 +121,7 @@
       // console.log(data.msg);
       $(".chattingBox .list").append(`<li class="${meOrOther}">
             <div class="profile">
-              <img src="../images/man.png" alt="" />
+              <img src="../images/profile.png" alt="" />
             </div>
             <div class="msgBox">
               <span class="name">${data.nickName}</span>
